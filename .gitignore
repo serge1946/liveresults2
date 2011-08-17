@@ -1,0 +1,11 @@
+#Image files
+.png
+.jpg
+.gif
+
+#Journal files
+.DS_Store
+
+#Binary and other data
+.sqlite
+.tmproj
