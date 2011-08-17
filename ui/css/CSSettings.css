@@ -1,0 +1,50 @@
+/* Structural Layout */
+
+#inner {
+	/*Position & Dimensions*/
+	position: absolute;
+	width: 600px;			
+	margin-left: -300px;		/* width/2 		*/
+	left: 50%;
+/*	height: 500px; */
+/*	top: 	-250px; */
+/*	border: 1px dotted #f00;					*/
+}
+/* Markup-specific formatting */
+#inner fieldset {
+	margin: 0;
+	padding: 0;
+	border-style: none;
+}
+#inner label {
+	margin-bottom: 10px;
+	display: inline-block;
+}
+#inner .columns {
+	display: inline-block;
+	width: 287px;		/* Use 191px if thirds,287 if halves*/
+	border-right: 1px inset #989898;
+	margin-right: 5px;
+}
+/* Element-specific formatting*/
+#category, #code { text-align: center; }
+
+input[type=text], input[type=number] { color: #575758; }
+input[type=number] { text-align: center; }
+
+.warning {
+	display: inline-block;
+	padding: 0;
+	margin-top: 5px;
+	color: #ff0000;
+}
+.invisible 	{ display:  none; }
+.alignleft	{ 
+	width:  90px;
+	text-align: right;
+}
+.alignright	{ float: right; }
+
+input[type=submit], .osx-modal-data > button, .input_data > button, p > button { width:  72px; }
+
+.input_data	{ height: 30px; }

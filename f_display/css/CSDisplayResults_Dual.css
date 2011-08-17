@@ -1,0 +1,7 @@
+#inner {
+	/*Position & Dimensions*/
+	position: absolute; width: 1008px; margin-left: -504px; /* width/2 */ left: 50%;
+	top:  74px;
+}
+#title { position: absolute; top:  44px; width: 1008px; margin-left: -504px; /* width/2 */ left: 50%;}
+.l { width: 50%; margin: 0; float: left; }

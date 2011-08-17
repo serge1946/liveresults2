@@ -1,0 +1,65 @@
+body {
+	background: url(noise.png);
+	/* Inherited */
+	overflow:  hidden;
+	font: 10pt "Lucida Grande", Helvetica;
+}
+h2 {
+	width: 100%;
+	margin-top: 10px;
+	padding-top: 40px;
+}
+#outer {
+	display: block;
+	position: relative;
+	width:  768px;
+	margin-left: auto;
+	margin-right: auto;	
+}
+#main_menu {
+	display: block;
+	position: relative;
+	width:  360px; 	/* = 3* the set width of .ui-button */
+	top: 20px;
+	margin-left: auto;
+	margin-right: auto;
+/*	background-color: #c8ff5e; */
+}
+
+/* Augment Aristo styles */
+.ui-button { width: 120px; }
+.ui-button-text > span { border-style: none; }
+
+#content {
+	position: relative;
+	width:  100%;
+	top: 10px;
+
+	margin-top: 10px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.image33, .image50 {
+	position: relative;
+	top: 20px;
+	margin-top: 20px;
+	display: inline-block;
+	text-align: center;
+	vertical-align: middle;
+/*	background-color: #c8ff5e; */
+}
+.image33 {
+	width: 32%;
+}
+.image50 {
+	width: 49%;
+}
+.nb{
+	font-size: 64%;
+}
+/* INHERITED STYLES */
+
+.demoHeaders { margin-top: 2em; }
+.columnbox { height: 170px; width: 48%; float:left; margin-right: 1%; }
+#eq span { 	height:120px; float:left; margin:15px 	}

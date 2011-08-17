@@ -1,0 +1,10 @@
+/* STRUCTURAL LAYOUT */
+#inner {
+	/* Positioning & notional dimensions */
+	position: absolute; width: 504px; margin-left: -252px;	/* width/2 */ left: 50%;
+	top:  74px;							/* try 100px */
+}
+#title { position: absolute; top:  44px; width: 1008px; margin-left: -504px; /* width/2 */ left: 50%;}
+
+/* Added class for switching between male & female results... */
+.switch { margin-bottom: -18px; }

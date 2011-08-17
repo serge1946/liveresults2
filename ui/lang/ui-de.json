@@ -1,0 +1,61 @@
+{
+	"tabs"	: {
+		"tab1" : "Einstellungen", 
+		"tab2" : "Ergebnisse", 
+		"tab3" : "Anzeige"
+	},
+	"head"	: {
+		"tab1" : "Auswählen und bearbeiten startliste daten:", 
+		"tab2" : "Wählen sie den Gerätetyp:", 
+		"tab3" : "Wählen sie das Anzeigeformat:"
+	},
+	"pane1"	: {
+		"c1" : { 
+			"title" : "Wählen sie die Runde, die angezeigt werden soll", 
+			"q" : "Qualifikation", 
+			"s" : "Halbfinale", 
+			"f" : "Finale" 
+		},
+		"c2" : { 
+			"title" : "Importieren und Bearbeiten von Startlisten", 
+			"tab11" : "Import", 
+			"tab12" : "Bearbeiten",
+			"str1"	: "&nbsp;Importieren von Daten aus der IFSC Ergebnissliste:",
+			"str2"	: "Wählen sie eine CSV-Datei:",
+			"query"	: {
+				"catg" 	: "Kategorie:",
+				"strt"	: "&nbsp;Startnummer:",
+				"name"	: "Name:",
+				"code"	: "Land:",
+				"rank"	: "Rang:"
+			}
+		 },
+		"c3" : { 
+			"title" : "Speichern oder exportieren sie die Ergebnisse", 
+			"tab21" : "Speichern" , 
+			"tab22" : "Export",
+			"str1" : "Speichern als:", 
+			"str2" : "Export als CSV-formatierte Daten" 
+		}
+	},
+	"pane2"	: {
+		"desc1" : "Smartphone", 
+		"desc2" : "Tablet", 
+		"desc3" : "Netbook", 
+		"note1" : "nur Halbfinale &amp; Finale", 
+		"note2" : "&nbsp;", 
+		"note3" : "&nbsp;" 
+	},
+	"pane3"	: {
+		"desc1" : "Porträt: bis zu 20 Ergebnisse/Bildschirm", 
+		"desc2" : "Landschaft: bis zu 7 Ergebnisse/Bildschirm", 
+		"note1" : "Männliche und weibliche Ergebnisse werden in Rotation angezeigt werden", 
+		"note2" : "Weitere Ergebnisse werden auf 30s Abständen gezeigt werden"
+	},
+	"buttons" : {
+		"import" 	: "Import",
+		"export" 	: "Export",
+		"save"		: "Speichern",
+		"update"	: "Update"
+	}
+}

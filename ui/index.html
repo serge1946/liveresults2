@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>liveresults</title>
+		<link rel='shortcut icon' href='./css/favicon.ico' />
+		<link type="text/css" href="./css/Aristo/jquery-ui-1.8.5.custom.css" rel="stylesheet" />	
+		<link type="text/css" href="./css/main.css" rel="stylesheet" />	
+		<!-- CSS Styling for settings panel-->
+		<style type="text/css" media="screen">
+			@import url('./css/CSTabs.css');
+			@import url('./css/CSSettings.css');
+			@import url('./css/CSSettingsOSXTemplate.css');
+		</style>
+		<!-- jQuery includes -->
+		<script type="text/javascript" src="./js/jquery-1.4.4.min.js"></script>
+		<script type="text/javascript" src="./js/jquery-ui-1.8.7.custom.min.js"></script>
+		<script type="text/javascript" src="./js/jquery.form.min.js"></script>
+		<script type="text/javascript" src="./js/jquery.localize.js"></script>
+		<!-- Object J Classes -->	
+		<script type="text/javascript" src="./js/JSSettings.js"></script>
+		<script>
+			/* Apply Aristo theming */
+			$(function(){ $("#main_menu").buttonset() });
+			/* Execute main() when the DOM is ready */
+			$(document).ready(function(){
+				var idx, headings, el;
+				/* Initialise the display */
+				idx = $('input[name=tabgroup]').index($('input[name=tabgroup]:checked'));
+				$('.pane').css('display','none').eq(idx).css('display','block');
+				/* Set the visibility of tabs in each 'action' of the first pane */
+				el = $('#inner>div.osx-container').find('.osx-modal-data');
+				$(el).find('ul.tabs li:first').addClass("active").show();
+				$(el).find('.tab_content').hide();
+				$(el).find('.tab_content:first').show();
+				/* Localise the page */
+				var opts = { pathPrefix: "lang", skipLanguage: /^en/ };
+				$("[rel*=localize]").localize("ui", opts);		
+				/* EVENT HANDLERS */
+				/* Event handlers - Top level menu */
+				$('input[name=tabgroup]').click(function(){ 
+					$('.pane').hide();
+					idx = $('input[name=tabgroup]').index($('input[name=tabgroup]:checked'));
+					$('.pane').eq(idx).fadeIn('slow');
+				});
+				/* Event handlers - Pane 1 */				
+				settings_listener();	// -> JSSettings.js
+				/* Event handlers - Pane 2 */
+				$('#ipod_link').click(function(){ window.location = "../app_mobile/phone.php"; });				
+				$('#ipad_link').click(function(){ window.location = "../app_tablet/index.html"; });				
+				$('#book_link').click(function(){ window.location = "../app_tablet/index.html"; });				
+				/* Event handlers - Pane 3 */
+				$('#link_20').click(function(){ 
+					var theRound = $('input[name=radiogroup]:checked').val(); 
+					window.location = (theRound == 'qualification') ? "../q_display/qual_m1.html" : "../f_display/semi_m.html"; 
+				});				
+				$('#link_07').click(function(){
+					var theRound = $('input[name=radiogroup]:checked').val(); 
+					window.location = (theRound == 'qualification') ? "../q_display/qual_m.html" : "../f_display/final_c.html"; 
+				});				
+			});
+		</script>
+	</head>
+	<body>
+		<div id='outer'>
+			<!-- Pane controls (using Aristo theme buttons) -->
+			<div id="main_menu">
+				<input type="radio" id="tab1" name="tabgroup"/><label for="tab1"><span rel="localize[tabs.tab1]">Settings</span></label>
+				<input type="radio" id="tab2" name="tabgroup" checked="checked" /><label for="tab2"><span rel="localize[tabs.tab2]">Results</span></label>
+				<input type="radio" id="tab3" name="tabgroup"/><label for="tab3"><span rel="localize[tabs.tab3]">Displays</span></label><br/>
+			</div>
+			<!-- Content Pane -->
+			<div id="content">
+				<!-- 'Settings' -->
+				<div class='pane'>
+					<h2 rel="localize[head.tab1]">Select and edit the startlists:</h2>
+					<div id="inner">
+						<!-- CONTAINER 1 -->
+						<div class="osx-container">
+							<div class="osx-modal-title" rel="localize[pane1.c1.title]">Choose the round to be displayed</div>
+							<div class="osx-modal-data">
+								<span class='columns'>
+									<input name="radiogroup" type="radio" id="q" value="qualification"/><label for="q" rel="localize[pane1.c1.q]">Qualification</label><br/>
+									<input name="radiogroup" type="radio" id="s" value="semifinal"/><label for="s" rel="localize[pane1.c1.s]">Semi-Final</label><br/>	
+									<input name="radiogroup" type="radio" id="f" value="final"/><label for="f" rel="localize[pane1.c1.f]">Final</label>	
+								</span>
+							</div>				 
+						</div>
+						<div class="osx-connector"></div>
+						<!-- CONTAINER 2 -->
+						<div class="osx-container" id='test'>
+							<div class="osx-modal-title"  rel="localize[pane1.c2.title]">Import and edit startlists for the round</div>
+							<div class="osx-modal-data">
+								<ul class='tabs'>
+									<li><a href="#tab11" rel="localize[pane1.c2.tab11]">Import</a></li>
+									<li><a href="#tab12" rel="localize[pane1.c2.tab12]">Edit</a></li>
+								</ul>
+								<!-- IMPORT -->
+								<div class='tab_content' id='tab11'>
+									<input name="checkbox" type="checkbox" id="inputselect" /><label rel="localize[pane1.c2.str1]">&nbsp;Import data from the IFSC Results Service:</label><br/>
+									<div class='input_data'  style='display:none'>
+										<label for="compID">Competition ID:</label><input type="number" id="compID" size="6" maxlength="4"/>
+										<button id="submit3" class="alignright">Import</button>
+									</div>
+									<div class='input_data'>
+										<form id="import_form" action="./scripts/JSSettings_UploadFile.php" method="get" enctype="multipart/form-data">
+											<label for="file" rel="localize[pane1.c2.str2]">Select a CSV file:</label><input type="file" name="userfile" id="file"/>
+										<!--<input class="invisible" type="text" name='theRound'/>-->
+											<input type="submit" class="alignright" value="Import" rel="localize[buttons.import]"/>
+										</form>
+									</div>	
+									<div class="osx-modal-results" id="results1"></div>
+								</div>
+								<!-- EDIT -->
+								<div class='tab_content' id='tab12'>
+									<label class="alignleft" for="category" rel="localize[pane1.c2.query.catg]">Category:</label><input type="text" id="category" size="3" maxlength="3" />
+									<label for="starter" rel="localize[pane1.c2.query.strt]">&nbsp;Startnumber:</label><input type="number" id="starter" size="4" maxlength="3"/><br/>
+									<label class="alignleft" for="name" rel="localize[pane1.c2.query.name]">Name:</label><input type="text" id="name" size="20" maxlength="20"/>
+									<label for="code" rel="localize[pane1.c2.query.code]">Country:</label><input type="text" id="code" size="4" maxlength="3"/>
+									<label for="rank" rel="localize[pane1.c2.query.rank]">Ranking:</label><input type="number" id="rank" size="3" maxlength="3"/>
+									<button id="submit4" class="alignright" rel="localize[buttons.update]">Update</button>
+									<div class="osx-modal-results" id="results3"></div>									
+								</div>
+							</div>											
+						</div>
+						<div class="osx-connector"></div>
+						<!-- CONTAINER 3 -->
+						<div class="osx-container">
+							<div class="osx-modal-title" rel="localize[pane1.c3.title]">Save or export the results</div>
+							<div class="osx-modal-data">
+								<ul class='tabs'>
+									<li><a href="#tab21" rel="localize[pane1.c3.tab21]">Save</a></li>
+									<li><a href="#tab22" rel="localize[pane1.c3.tab22]">Export</a></li>
+								</ul>
+								<!-- SAVE -->
+								<div class='tab_content' id='tab21'>
+									<label class="alignleft" for="name" rel="localize[pane1.c3.str1]">Save As:</label>
+									<input type="text" id="filename" size="40" maxlength="40" />
+									<button id="submit5" class="alignright"  rel="localize[buttons.save]">Save</button>
+									<div class="osx-modal-results" id="results5"></div>
+								</div>
+								<!-- EXPORT -->
+								<div class='tab_content' id='tab22'>
+									<p><span rel="localize[pane1.c3.str2]">Export as CSV formatted data</span>
+<!--									<button id="submit6" class="alignright" rel="localize[buttons.export]" onclick='./scripts/Export_CSV.php'><a href='./scripts/Export_CSV.php'>Export</a></button></p> -->
+									<button id="submit6" class="alignright" rel="localize[buttons.export]">Export</button></p>
+									<div class="osx-modal-results" id="results6"></div>									
+								</div>
+							</div>
+						</div>
+					</div>						
+				</div>
+				<!-- 'Results' -->
+				<div class='pane'>
+					<h2 rel="localize[head.tab2]">Select the type of input device:</h2>
+					<div>
+						<span id='ipod_link' class='image33'><img src="./css/img/iphone_240.png" width="70px"></span>
+						<span id='ipad_link' class='image33'><img src="./css/img/iPad-360.png" width="70%"></span>
+						<span id='book_link' class='image33'><img src="./css/img/netbook.png" width='100%'></span>
+					</div>
+					<div>
+						<span class='image33'><span rel="localize[pane2.desc1]">Phone</span><p class='nb' rel="localize[pane2.note1]">semifinal &amp; final rounds ONLY</p></span>
+						<span class='image33'><span rel="localize[pane2.desc2]">Tablet</span><p class='nb' rel="localize[pane2.note2]">&nbsp;</p></span>
+						<span class='image33'><span rel="localize[pane2.desc3]">Netbook</span><p class='nb' rel="localize[pane2.note3]">&nbsp;</p></span>
+					</div>
+				</div>
+				<!-- 'Displays' -->
+				<div class='pane'>
+					<h2 rel="localize[head.tab3]">Select the display format:</h2>
+					<div>
+					<span id='link_20' class='image50'><img src="css/img/20_display.jpg" width="55%"></span>
+					<span id='link_07' class='image50'><img src="css/img/07_display.jpg" width="88%"></span>
+					</div>
+					<div>
+					<span class='image50'><span rel="localize[pane3.desc1]">Portrait: Up to 20 results/screen</span><p class='nb' rel="localize[pane3.note1]">Male and female results will be shown in rotation</p></span>
+					<span class='image50'><span rel="localize[pane3.desc2]">Landscape: Up to 7 results/screen</span><p class='nb' rel="localize[pane3.note2]">Additional results will be shown at 30s intervals</p></span>					
+					</div>
+				</div>
+			</div>
+		</div>
+	</body>
+</html>

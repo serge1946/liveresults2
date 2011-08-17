@@ -1,0 +1,56 @@
+/* TAB STRUCTURE */
+ul.tabs {
+	margin: 0 0 3px;
+
+	float: left;
+	width: 100%;
+
+	list-style: none;
+	position: relative;
+	top: -6px;
+	left: -40px;
+}
+ul.tabs li {
+	float: left;
+	height: 23px; 		/*--Subtract 1px from the height of the unordered list-- */
+	line-height: 24px; 	/*--Vertically aligns the text within the tab--*/
+	
+	margin: -1px 0 0; 	/*--Push the list item up 1px--*/
+	/* Added */
+	width: 100px;
+	text-align: center;
+
+	border-top: 1px solid #ccc;
+	border-bottom-left-radius: 4px; webkit-border-bottom-left-radius: 4px; moz-border-radius-bottomleft: 4px;
+	border-bottom-right-radius: 4px; webkit-border-bottom-right-radius: 4px; moz-border-radius-bottomright: 4px;
+
+}
+
+ul.tabs li a {
+	display: block;
+	text-decoration: none;
+	color: #738499;
+
+	font-size: 0.8em;
+	font-weight:bold;
+	text-shadow:0 1px 0 #f4f4f4;
+}
+ul.tabs li a:hover {
+	background: #e4e4e4;
+
+	border-bottom-left-radius: 4px; webkit-border-bottom-left-radius: 4px; moz-border-radius-bottomleft: 4px;
+	border-bottom-right-radius: 4px; webkit-border-bottom-right-radius: 4px; moz-border-radius-bottomright: 4px;
+}
+ul.tabs li.active { 
+	background: #ddd;
+	border: 1px solid #ccc;
+	border-top: 1px solid #ddd;
+}
+
+ul.tabs li.active a:hover {
+	/*--Makes sure that the active tab does not listen to the hover properties--*/
+	background: #ddd;	
+}
+
+.tab_content > button { width:  72px; }
+

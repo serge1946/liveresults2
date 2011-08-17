@@ -1,0 +1,31 @@
+#title {
+	top:  4px;
+}
+#inner {
+	top:  28px;
+}
+/* RESULTS BLOCK */
+.surname { width:  160px; /* added */}
+.resultsblock {
+	display: inline-block;
+	float: left;
+	width:  175px;
+	margin: 3px 0 0 2px;
+	text-align: left;
+	/* Debugging */
+	 background-color: rgba(255,85,255,0); 
+}
+/* SUMMARY BLOCK */
+.attemptsblock {
+	display: inline-block;
+	float: right;
+	width:  18px;
+	margin: 2px 2px 0;
+	font: 12px/20px Verdana, Helvetica, Arial, sans-serif;	
+	text-align: center;
+	color: #ffaa00;
+	/* Debugging */ 
+	background-color: rgba(253,255,85,0.0);
+}
+.TA { display: inline-block; width:  16px; }
+.BA { display: inline-block; width:  16px; border: none; }

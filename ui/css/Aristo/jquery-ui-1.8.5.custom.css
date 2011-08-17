@@ -1,0 +1,67 @@
+/*
+* Aristo for jQuery UI
+* Licensed under Creative Commons Attribution-Share Alike 3.0 with permission from 280 North and Pinvoke.
+*/
+
+/* Layout helpers
+----------------------------------*/
+.ui-helper-hidden { display: none; }
+.ui-helper-hidden-accessible { position: absolute; left: -99999999px;}
+.ui-helper-reset { margin: 0; padding: 0; border: 0; outline: 0; line-height: 1.3; text-decoration: none; font-size: 100%; list-style: none; }
+.ui-helper-clearfix:after { content: "."; display: block; height: 0; clear: both; visibility: hidden; }
+.ui-helper-clearfix { display: inline-block; }
+/* required comment for clearfix to work in Opera \*/
+* html .ui-helper-clearfix { height:1%; }
+.ui-helper-clearfix { display:block; }
+/* end clearfix */
+.ui-helper-zfix { width: 100%; height: 100%; top: 0; left: 0; position: absolute; opacity: 0; filter:Alpha(Opacity=0); }
+
+/*
+ * jQuery UI Button @VERSION
+ *
+ * Copyright 2010, AUTHORS.txt (http://jqueryui.com/about)
+ * Dual licensed under the MIT or GPL Version 2 licenses.
+ * http://jquery.org/license
+ *
+ * http://docs.jquery.com/UI/Button#theming
+ */
+.ui-button { display: inline-block;  position: relative; padding: 0; margin-right: .1em; text-decoration: none !important; cursor: pointer; text-align: center; zoom: 1; overflow: visible; border: 0px none !important; -moz-border-radius: 0px; -webkit-border-radius: 0px; border-radius: 0px; } /* the overflow property removes extra width in IE */
+.ui-button-icon-only { width: 2.2em; } /* to make room for the icon, a width needs to be set here */
+button.ui-button-icon-only { width: 2.4em; } /* button elements seem to need a little more width */
+.ui-button-icons-only { width: 3em; } 
+button.ui-button-icons-only { width: 3.2em; } 
+.ui-button span { -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; border: 1px solid; }
+
+
+/* === INPUT:SUBMIT BUG FIX === */
+input.ui-button { background: url(images/button_bg.png) 0px 0px repeat-x !important; color: #4f4f4f; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; border: 1px solid #b6b6b6; outline: none; }
+input.ui-button:hover { background: url(images/button_bg.png) 0px 0px repeat-x !important; color: #313131; border-color: #9d9d9d; -moz-box-shadow: 0 0 6px rgba(0, 0, 0, 0.3); -webkit-box-shadow: 0px 0px 8px rgba(212,212,212,1); box-shadow: 0px 0px 8px rgba(212,212,212,1); }
+input.ui-button:active { background: url(images/button_bg.png) 0px bottom repeat-x !important; color: #4f4f4f; border-color: #b6b6b6;  }
+
+/* === IE6 AND IE7 BUTTON WIDTH FIX === */
+.ui-button { *display: inline !important; }
+
+.ui-state-default .ui-button-text { background: url(images/button_bg.png) 0px 0px repeat-x !important; color: #4f4f4f; border-color: #b6b6b6; }
+.ui-state-hover .ui-button-text { background: url(images/button_bg.png) 0px 0px repeat-x !important; color: #313131; border-color: #9d9d9d; -moz-box-shadow: 0 0 6px rgba(0, 0, 0, 0.3); -webkit-box-shadow: 0px 0px 8px rgba(212,212,212,1); box-shadow: 0px 0px 8px rgba(212,212,212,1); }
+.ui-state-active .ui-button-text { background: url(images/button_bg.png) 0px bottom repeat-x !important; color: #4f4f4f; border-color: #b6b6b6; }
+
+/*button text element */
+.ui-button .ui-button-text { display: block; line-height: 1.4; font-weight: bold; font-size: 14px; text-shadow: 0px 1px 0px rgba(255,255,255,0.8); }
+.ui-button-text-only .ui-button-text { padding: 5px 12px; }
+.ui-button-icon-only .ui-button-text, .ui-button-icons-only .ui-button-text { padding: 5px; text-indent: -9999999px; }
+.ui-button-text-icon-primary .ui-button-text, .ui-button-text-icons .ui-button-text { padding: 5px 12px 5px 25px; }
+.ui-button-text-icon-secondary .ui-button-text, .ui-button-text-icons .ui-button-text { padding: 5px 12px 5px 25px;; }
+.ui-button-text-icons .ui-button-text { padding-right: 1.8em; }
+/* no icon support for input elements, provide padding by default */
+input.ui-button { padding: .4em 1em; }
+
+/*button sets*/
+.ui-buttonset { margin-right: 7px;}
+.ui-buttonset .ui-button { margin-left: 0; margin-right: -.3em; }
+.ui-buttonset, .ui-buttonset span { -moz-border-radius: 0px !important; -webkit-border-radius: 0px !important; border-radius: 0px !important; }
+.ui-corner-left .ui-button-text { -moz-border-radius-topleft: 4px !important; -webkit-border-top-left-radius: 4px !important; border-top-left-radius: 4px !important; -moz-border-radius-bottomleft: 4px !important; -webkit-border-bottom-left-radius: 4px !important; border-bottom-left-radius: 4px !important; }
+.ui-corner-right .ui-button-text { -moz-border-radius-topright: 4px !important; -webkit-border-top-right-radius: 4px !important; border-top-right-radius: 4px !important; -moz-border-radius-bottomright: 4px !important; -webkit-border-bottom-right-radius: 4px !important; border-bottom-right-radius: 4px !important; }
+.ui-buttonset .ui-state-active .ui-button-text { cursor: default; background: url(images/button_bg.png) 0px -33px repeat-x !important; color: #1c4257; border-color: #7096ab; -moz-box-shadow: none !important; -webkit-box-shadow: none !important; box-shadow: none !important; }
+
+/* workarounds */
+button.ui-button::-moz-focus-inner { border: 0; padding: 0; } /* reset extra padding in Firefox */

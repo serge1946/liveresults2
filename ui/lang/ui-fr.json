@@ -1,0 +1,61 @@
+{
+	"tabs"	: {
+		"tab1" : "Réglages", 
+		"tab2" : "Résultats", 
+		"tab3" : "Ecrans"
+	},
+	"head"	: {
+		"tab1" : "Sélectionner et éditer les listes de départ:", 
+		"tab2" : "Sélectionner l'appareil utilisé:", 
+		"tab3" : "Sélectionner le format d'écran:"
+	},
+	"pane1"	: {
+		"c1" : { 
+			"title" : "Choisissez le tour à afficher", 
+			"q" : "Qualification", 
+			"s" : "Demi-Finale", 
+			"f" : "Finale" 
+		},
+		"c2" : { 
+			"title" : "Importer et éditer les listes de départ", 
+			"tab11" : "Importer", 
+			"tab12" : "Editer",
+			"str1"	: "&nbsp;Importer les données depuis l'IFSC Results Service",
+			"str2"	: "Sélectionner un fichier CSV:",
+			"query"	: {
+				"catg" 	: "Catégorie:",
+				"strt"	: "&nbsp;Numéro de Départ:",
+				"name"	: "Nom:",
+				"code"	: "Pays:",
+				"rank"	: "Classement:"
+			}
+		 },
+		"c3" : { 
+			"title" : "Sauver ou exporter les résultats", 
+			"tab21" : "Sauver" , 
+			"tab22" : "Exporter",
+			"str1" : "Sauver à:", 
+			"str2" : "Exporter les données au format CSV" 
+		}
+	},
+	"pane2"	: {
+		"desc1" : "Smartphone", 
+		"desc2" : "Tablette", 
+		"desc3" : "Netbook", 
+		"note1" : "Seulement demi-finale &amp; finale", 
+		"note2" : "&nbsp;", 
+		"note3" : "&nbsp;" 
+	},
+	"pane3"	: {
+		"desc1" : "Portrait: Jusqu'à 20 résultats/écran", 
+		"desc2" : "Paysage: Jusqu'à 7 résultats/écran", 
+		"note1" : "Les résultats pour masculins et féminins seront présentés en alternance", 
+		"note2" : "Les résultats seront affichés à intervalles de 30s"
+	},
+	"buttons" : {
+		"import" 	: "Importer",
+		"export" 	: "Exporter",
+		"save"		: "Sauver",
+		"update"	: "Modifier"
+	}
+}
