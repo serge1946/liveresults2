@@ -2,16 +2,17 @@
  * Copyright 2011, Tim Hatch
  * Dual licensed under the MIT or GPL Version 2 licenses.
  */
-/* TO DO
- * (1) Refactor Results/SuperView classes into a single AppView class
- * (2) Properly deal with touch events (this may be as simple as switching to ZEPTO from JQUERY)
+/* 
+ * TODO : (1) Refactoring to permit properly asynchrous GET calls on load/update
+ * TODO : (2) Refactor Results/SuperView classes into a single AppView class
+ * TODO : (3) Properly deal with touch events (this may be as simple as switching to ZEPTO from JQUERY)
  */
 /*!
  *	Climber model extending Backbone.js 'Model' class
  */
 var Climber = Backbone.Model.extend({
 	/* Constructor */
-	// Instance Props: (str)categoryTag, (int)startnumber, (str)name, (str)countrycode, (arr)topsArray, (arr)bonusArray -> init & set by collection::load()
+	// Instance Props: (int)startnumber, (str)name, (str)countrycode, (int) climberID, (arr)topsArray, (arr)bonusArray -> init & set by collection::load()
 	trim: function(n){
 		(this.attributes.topsArray).splice(n, 1);
 		(this.attributes.bonusArray).splice(n, 1);
@@ -20,12 +21,12 @@ var Climber = Backbone.Model.extend({
 		var n = obj.topsArray.length;
 		while(n--){
 			if(this.attributes.bonusArray[n] != obj.bonusArray[n]) return false;
-			if(this.attributes.topsArray[n] != obj.topsArray[n]) return false;
+			if(this.attributes.topsArray[n]  != obj.topsArray[n])  return false;
 		}
 		return true;		
 	}
 });
-/*!
+/*
  * Climber view extending Backbone.js 'View' class
  */
 var ClimberView = Backbone.View.extend({
@@ -43,8 +44,8 @@ var ClimberView = Backbone.View.extend({
 	/* Render the view when the linked model is first loaded */
 	render: function(){
 		var tmpl, str, n = this.model.get('topsArray').length;
-		tmpl = "<span class='startnumber'><%=sn %></span><span class='surname'><%=name %></span><span class='code'><%=code %></span><% while(i--){ %> <span class='title'><input type='text' pattern='[0-9]*' placeholder='b'/><input type='text' pattern='[0-9]*' placeholder='t'/></span> <% }; %>";
-		str = _.template(tmpl, { i : n, sn: this.model.get('startnumber'), name: this.model.get('name'), code : this.model.get('countrycode') });
+		tmpl = "<span class='startnumber'><%=sn %></span><span class='surname'><%=name %></span><span class='code'><%=code %></span><% while(i--){ %> <span class='title'><input type='text' pattern='[0-9]*' placeholder='&nbsp;&nbsp;&nbsp;b'/><input type='text' pattern='[0-9]*' placeholder='&nbsp;&nbsp;&nbsp;t'/></span> <% }; %>";
+		str  = _.template(tmpl, { i : n, sn: this.model.get('startnumber'), name: this.model.get('name'), code : this.model.get('countrycode') });
 		$(this.el).html(str);
 		this.update();
 		return this;
@@ -55,8 +56,10 @@ var ClimberView = Backbone.View.extend({
 		elArray = $(this.el).find('.title');
 		while(n--){
 			ioArray = (elArray).eq(n).find('input');
-			ioArray[0].value = this.model.get('bonusArray')[n];
-			ioArray[1].value = this.model.get('topsArray')[n];
+			b = this.model.get('bonusArray')[n];
+			t = this.model.get('topsArray')[n];
+			ioArray[0].value = b;
+			ioArray[1].value = t;
 		}
 		return this;
 	},
@@ -64,44 +67,53 @@ var ClimberView = Backbone.View.extend({
 	postResult: function(){
 		var obj = this;
 		var b, t, elArr, formJSON, bArr = [], tArr = [], formdata = [];
-		elArr = $(this.el).find('.title');
+		elArr   = $(this.el).find('.title');
 		_(elArr).each(function(el){
 			b = el.children[0].value; bArr.push(b ? parseInt(b,10) : null);
 			t = el.children[1].value; tArr.push(t ? parseInt(t,10) : null);
 		});		
 		/* Update the model and push to the server */
 		this.model.set({ 'bonusArray': bArr, 'topsArray': tArr })
-		formdata.push({ startnumber: this.model.get('startnumber'), bonusArray: bArr, topsArray: tArr});
+		formdata.push({ climberID: this.model.get('climberID'), bonusArray: bArr, topsArray: tArr});
 		formJSON = JSON.stringify(formdata, null);
-		$.post('./scripts/SetResults.php', { category: obj.model.get('categoryTag'), jsonstring: formJSON }, function(data){ window.console.log(data) });	
+//		window.console.log(formJSON);
+		$.post('./scripts/SetResults.php', { jsonstring: formJSON }, function(data){ window.console.log(data) });	
 	}
 });
 /*!
  * Startlist/Resultslist model extending Backbone.js 'Collection' class
  */	
 var ResultsList = Backbone.Collection.extend({
-//	url				: './scripts/GetResults.php',
+	url				: './scripts/GetResults.php',
 	model			: Climber,
 	categoryTag		: 'm',
+	qualGroup		: null,
 	numberOfBlocs	: 4,
 	/* Get startlist data from the server */
 	load: function(options){
 		var obj = this;
-		if(options.categoryTag) this.categoryTag = options.categoryTag;
-		if(options.numberOfBlocs) this.numberOfBlocs = options.numberOfBlocs;
+		if(options.categoryTag)	this.categoryTag = options.categoryTag;
+		if(options.qualGroup) {
+			this.qualGroup 	   = options.qualGroup;
+			this.numberOfBlocs = 5;
+		}	  
 		/* Interrogate the results database */
 		$.ajax({
-			url: './scripts/GetResults.php',
-			type: 'GET',
-			data: ({ 'category': obj.categoryTag }),
+			url		: obj.url,
+			type	: 'GET',
+			data	: ({ 'category': obj.categoryTag, 'group': obj.qualGroup }),
 			dataType: 'json',
-			async: false,
-			success: function(data){
-//				window.console.log(data);
+			async	: false,
+			success	: function(data){
 				obj.refresh(data);
 				_(obj.models).each(function(model){
-					model.set({ 'categoryTag': obj.categoryTag, 'id' : model.get('startnumber') });
-					model.trim(obj.numberOfBlocs)
+					model.set({ 
+//						'categoryTag': obj.categoryTag,
+//						'qualGroup'	 : obj.qualGroup, 
+//						'id' 		 : model.get('startnumber')		// Needed for collection.get() which searches by id
+						'id' 		 : model.get('climberID')		// Needed for collection.get() which searches by id
+					});
+					model.trim(obj.numberOfBlocs);
 				});
 			}
 		});
@@ -112,20 +124,24 @@ var ResultsList = Backbone.Collection.extend({
 		var obj = this;
 		this.trigger('a_modal');	// Trigger a modal view when called
 		$.ajax({
-			url: './scripts/GetResults.php',
-			type: 'GET',
-			data: ({ 'category': obj.categoryTag, 'getResults': true }),
+			url		: obj.url,
+			type	: 'GET',
+			data	: ({ 'category': obj.categoryTag, 'group': obj.qualGroup }),
 			dataType: 'json',
-			async: false, 
-			success: function(data){
+			async	: false, // RADAR : Try this an an asynchronous call (load() is currently synchronous) - Check that data is correctly updated...- 
+			success	: function(data){
+//				window.console.log(data);
 				_(data).each(function(result){
-					var model = obj.get(result.startnumber);
+//					window.console.log(result);
+//					var model = obj.get(result.startnumber);
+					var model = obj.get(result.climberID);
+//					window.console.log(model);
 					model.set({ 
 						'topsArray' : result.topsArray.slice(0, obj.numberOfBlocs),
 						'bonusArray': result.bonusArray.slice(0, obj.numberOfBlocs)
 					});
 				});
-				obj.trigger('d_modal'); // Trigger removal of the modal view
+				obj.trigger('d_modal') // Trigger removal of the modal view
 			}
 		});
 		return this;
@@ -134,7 +150,7 @@ var ResultsList = Backbone.Collection.extend({
 /*!
  * ResultsList view extending Backbone.js 'View' class
  */
-var ResultsListView = Backbone.View.extend({
+var ResultsListView = Backbone.View.extend({	
 	events: {
 		'click .button' : 'postAll'
 	},
@@ -143,7 +159,7 @@ var ResultsListView = Backbone.View.extend({
 		var obj = this;
 		/* Create the view */
 		this.numberOfBlocs = this.collection.numberOfBlocs;
-		this.climberviews = [];
+		this.climberviews  = [];
 		this.collection.each(function(model){
 			obj.climberviews.push(new ClimberView({ model : model }));
 		});
@@ -157,11 +173,12 @@ var ResultsListView = Backbone.View.extend({
 	},
 	/* Render the view */	
 	render: function(){
-		var obj = this;
+		var obj 	= this;
 		var tmpl, n = this.numberOfBlocs;
 		// Render the header item
-		tmpl = "<header class='chrome_dark'><a href='#' class='icon icon_redo float_left'></a><a href='#' class='button float_right'>Save</a><p><%=title %></p></header><div class='headerblock h<%=j %>'><span class='startnumber'>&nbsp;</span><span class='surname'>Climber</span><span class='code spacer'>&nbsp;</span><% while(i--){ %><span class='title head'>Bloc <%=(j-i) %></span> <% }; %></div><ul class='u<%=j%>'></ul>";
-		header = ((this.collection.categoryTag).substring(0,1)=='m') ? 'Results - Male' :'Results - Female';
+		tmpl 		= "<header class='chrome_dark'><a href='#' class='icon icon_redo float_left'></a><a href='#' class='button float_right'>Save</a><p><%=title %></p></header><div class='headerblock h<%=j %>'><span class='startnumber'>&nbsp;</span><span class='surname'>Climber</span><span class='code spacer'>&nbsp;</span><% while(i--){ %><span class='title head'>Bloc <%=(j-i) %></span> <% }; %></div><ul class='u<%=j%>'></ul>";
+		var header  = ((this.collection.categoryTag) == 'm') ? 'Male' : 'Female';
+		if (this.collection.qualGroup) header += ' (Qualification Group '+(this.collection.qualGroup)+')';
 		$(obj.el).append( _.template(tmpl, { i : n, j : n, title : header }));
 		// Render each sub-view and append.
 		_(this.climberviews).each(function(view){
@@ -173,7 +190,7 @@ var ResultsListView = Backbone.View.extend({
 	postAll: function(){
 		/* Reset the form data */
 		var obj = this;
-		var b, t, sn, elArr, formJSON, formdata = [];
+		var b, t, cn, elArr, formJSON, formdata = [];
 		/* Get data from the form  */
 		_(obj.climberviews).each(function(view){
 			var bArr = [], tArr = [];
@@ -182,12 +199,13 @@ var ResultsListView = Backbone.View.extend({
 				b = el.children[0].value; bArr.push(b ? parseInt(b,10) : null);
 				t = el.children[1].value; tArr.push(t ? parseInt(t,10) : null);
 			});
-			sn = parseInt($(view.el).children('.startnumber').text(),10);
-			formdata.push({ startnumber: sn, bonusArray: bArr, topsArray: tArr});
+			cn = view.model.get('climberID');
+			formdata.push({ climberID: cn, bonusArray: bArr, topsArray: tArr});
 		});
 		/* post data */
 		formJSON = JSON.stringify(formdata, null);
-		$.post('./scripts/SetResults.php', { category: obj.collection.categoryTag, jsonstring: formJSON }, function(data){ window.console.log(data) });
+		window.console.log(formJSON);
+		$.post('./scripts/SetResults.php', { jsonstring: formJSON }, function(data){ window.console.log(data) });
 	},
 	/* Show/hide a modal progress dialog */
 	a_modal: function(){
@@ -203,9 +221,10 @@ var ResultsListView = Backbone.View.extend({
 var Results = Backbone.View.extend({
 	el: '#container',
 	initialize: function(params){
-		this.collection = new ResultsList().load(params);
+		this.collection = new ResultsList().load(params);	
 		if (this.collection.length) {
-			this.view = new ResultsListView({ collection : this.collection , el : this.render(params.categoryTag) }); // .render();
+			var elID  = (params.qualGroup) ? params.categoryTag+params.qualGroup : params.categoryTag;
+			this.view = new ResultsListView({ collection : this.collection , el : this.render(elID) });
 		}
 		// Bind the sort to any update of the results
 		return this;
@@ -220,6 +239,7 @@ var Results = Backbone.View.extend({
 /*!
  * Results object extending Backbone.js 'View' class
  */
+//	TODO : Add automation to pick-up either qualification or semifinal/final results as applicable???
 var SuperView = Backbone.View.extend({
 	el: '#container',
 	events: {
@@ -252,30 +272,3 @@ var SuperView = Backbone.View.extend({
 		}
 	}	
 });
-/* Legacy ResultsListView function to post a group of results to the server
-postResults: function(){
-	// Reset the form data
-	var obj = this;
-	var elArr, formdata, model, theFormContents = [];
-	// Get data from the form
-	_(obj.climberviews).each(function(view){
-		var sn, bArr = [], tArr = [];
-		elArr = $(view.el).find('.title');
-		_(elArr).each(function(el){
-			bArr.push(parseInt(el.children[0].value,10));
-			tArr.push(parseInt(el.children[1].value,10));
-		});
-		// and reduce the form contents to the changed data
-		sn = parseInt($(view.el).children('.startnumber').text(),10);
-		formdata = { startnumber: sn, bonusArray: bArr, topsArray: tArr};
-		model = obj.collection.get(sn);
-		model.compareWith(formdata) ? model.set({ 'bonusArray': bArr, 'topsArray': tArr }) : theFormContents.push(formdata);
-	});
-	// Reduce form contents against previously submitted data
-	if (theFormContents.length>0) {
-		formdata = JSON.stringify(theFormContents, null);
-		window.console.log(formdata);
-//		$.post('./scripts/SetResults.php', { category: obj.collection.categoryTag, jsonstring: formdata }, function(data){ window.console.log(data) });
-	} else { window.console.log('no data to update') }
-}
-*/

@@ -1,45 +1,32 @@
 <?php
-	/* Input parameters for the GET call */
-	$theCategory = (isset($_GET['category'])) ? $_GET['category'] : 'm';
-	$getResults = (isset($_GET['getResults'])) ? $_GET['getResults'] : false;
+	/*
+	 * PHP code to pull climber data from refactored sqlite database
+	 */
+	$category = (isset($_GET['category'])) ? $_GET['category'] : 'm';
+	$group    = (isset($_GET['group']))    ? $_GET['group']	   : 0;
+	
+	
+	// Open the database
+	$db    = new SQLite3('../../core_data/results.sqlite'); // TODO : Replace with... results.sqlite');
+	
+	// Fetch the Climber data
+	// TODO: Change $query to "...AND round IN (SELECT round FROM settings WHERE status)" will obviate the need for a concatenation but will need some refactoring of the calling JS as it will return multiple categories
+	
+	$round = ($group != 2) ? '(SELECT round FROM settings WHERE status)' : "'qualification2'";
+	$query = "SELECT * FROM results WHERE category = '$category' AND round = ";
+	$reslt = $db->query($query.$round." ORDER BY startnumber");
 
-	$getResults ? getResults($theCategory) : getClimberData($theCategory); 
-
-	function getClimberData($theCategory){
-		/* Open the results database */
-		$db = new SQLite3('../../core_data/results.sqlite');
-		/* Get the round etc. */
-		$r = $db->querySingle("SELECT round FROM globals WHERE rowid='1'");
-		$theResults = $theCategory."_".$r;
-		/* Pull down the climber data */
-		$n = $db->querySingle("SELECT COUNT() FROM $theResults");
-		for($i=0; $i<$n; $i++){
-			$queryResponse = $db->query("SELECT * FROM $theResults WHERE startnumber = '$i'+1");
-			$returnObj = $queryResponse->fetchArray(SQLITE3_ASSOC);
-			$topsArray 		= array($returnObj['topattempts1'], $returnObj['topattempts2'], $returnObj['topattempts3'], $returnObj['topattempts4'], $returnObj['topattempts5']);
-			$bonusArray 	= array($returnObj['bonusattempts1'], $returnObj['bonusattempts2'], $returnObj['bonusattempts3'], $returnObj['bonusattempts4'], $returnObj['bonusattempts5']);
-			$climberArray[$i] = array("startnumber" => $returnObj['startnumber'], "name" => $returnObj['name'], "countrycode" => $returnObj['countrycode'], "topsArray" => $topsArray, "bonusArray" => $bonusArray);
-		}		
-		// Echo the results as a JSON string
-		echo json_encode($climberArray);
+	// Then read and return the results data as a JSON object...
+	$result = array(); $i = 0; 
+	while($res = $reslt->fetchArray(SQLITE3_ASSOC)){
+		$tArray  	= array($res['tattempts1'], $res['tattempts2'], $res['tattempts3'], $res['tattempts4'], $res['tattempts5']);
+		$bArray     = array($res['battempts1'], $res['battempts2'], $res['battempts3'], $res['battempts4'], $res['battempts5']);
+		$result[$i] = array("startnumber" => $res['startnumber'], "name" => $res['name'], "countrycode" => $res['countrycode'], "climberID" => $res['climberID'], "topsArray" => $tArray, "bonusArray" => $bArray);
+//		$result[$i] = array_slice($res,2, 5);
+		$i++;
 	}
 	
-	function getResults($theCategory){
-		/* Open the results database */
-		$db = new SQLite3('../../core_data/results.sqlite');
-		/* Get the round etc. */	
-		$r = $db->querySingle("SELECT round FROM globals WHERE rowid='1'");
-		$theResults = $theCategory."_".$r;
-		/* Pull down the results */
-		$n = $db->querySingle("SELECT COUNT() FROM $theResults");
-		for($i=0; $i<$n; $i++){
-			$queryResponse = $db->query("SELECT * FROM $theResults WHERE startnumber = '$i'+1");
-			$returnObj = $queryResponse->fetchArray(SQLITE3_ASSOC);
-			$topsArray = array($returnObj['topattempts1'], $returnObj['topattempts2'], $returnObj['topattempts3'], $returnObj['topattempts4'], $returnObj['topattempts5']);
-			$bonusArray = array($returnObj['bonusattempts1'], $returnObj['bonusattempts2'], $returnObj['bonusattempts3'], $returnObj['bonusattempts4'], $returnObj['bonusattempts5']);
-			$resultsArray[$i] = array("startnumber" => $returnObj['startnumber'], "topsArray" => $topsArray, "bonusArray" => $bonusArray);
-		}		
-		// Echo the results as a JSON string
-		echo json_encode($resultsArray);
-	}
+	echo json_encode($result);
+//	$RV = array("useCountback" => $count, "results" => $result);
+//	echo json_encode($RV);
 ?>

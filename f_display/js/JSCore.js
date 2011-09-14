@@ -10,14 +10,14 @@ var Climber = Backbone.Model.extend({
 	// Instance Props: (int)startnumber, (str)name, (str)countrycode (int)qranking 	-> init & set by collection::load()
 	// Instance Props: (arr)topsArray, (arr)bonusArray 								-> init & set by collection::load()/update()
 	// Instance Props: (int)currentranking, (int)rankorder							-> init & set by collection::sort()
-	// Instance Props: (int)tops, (int)topattempts, (int)bonuses, (int)bonusattempts-> init & set set by this::setResults()
+	// Instance Props: (int)tops, (int)tattempts, (int)bonuses, (int)battempts-> init & set set by this::setResults()
 	/* getResults(): Return the top/bonus data as an array for sorting */
 	getResults: function(){
 		var arr = [];
 		arr[0] = -this.attributes.tops;
-		arr[1] = this.attributes.topattempts;
+		arr[1] = this.attributes.tattempts;
 		arr[2] = -this.attributes.bonuses;
-		arr[3] = this.attributes.bonusattempts;	
+		arr[3] = this.attributes.battempts;	
 		arr[4] = this.attributes.qranking;
 		arr[5] = -this.attributes.startnumber;
 		return arr;
@@ -33,29 +33,79 @@ var Climber = Backbone.Model.extend({
 			num = parseInt(bArr[i], 10);
 			if (num>0) { B++ ; BA += num; }
 		}
-		this.set({ 'tops': T, 'bonuses': B, 'topattempts': TA, 'bonusattempts': BA });
+		this.set({ 'tops': T, 'bonuses': B, 'tattempts': TA, 'battempts': BA });
+	}
+});
+/*!
+ * Climber view extending Backbone.js 'View' class
+ */
+var ClimberView = Backbone.View.extend({
+	tagName: 'li',
+	className: 'sortablelist',
+	/* Link the view to events on its associated model */
+	initialize: function(){
+		_.bindAll(this, 'render', 'update');		// shorthand for: this.render = _.bind(this.render, this); this.update = _.bind(this.update, this);
+		this.model.bind('refresh', this.render );
+		this.model.bind('change', this.update);
+	},
+	/* Render the view when the linked model is first loaded */
+	render: function(n){
+		var tmpl, str;
+		tmpl = "<span class='rank'><%=rank %></span><span class='name'><%=name %></span><span class='code'><%=code %></span><span class='resultsblock'><% while(i--){ %> <span class='top'>X</span> <% }; %><% while(j--){ %> <span class='bonus'>&nbsp;</span> <% } %></span><span class='attemptsblock'><span class='TA'>&nbsp;</span><span class='BA'>&nbsp;</span></span>";
+		str = _.template(tmpl, { i : n, j : n, rank: this.model.get('qranking'), name: this.model.get('name'), code : this.model.get('countrycode') });
+		$(this.el).html(str);
+		this.update();
+		return this;
+	},
+	/* Update the view when the linked model is updated  */
+	update: function(){
+		var i, btemp, ttemp, n, r_el, a_el;
+		var tArr = this.model.get('topsArray'), bArr = this.model.get('bonusArray');
+		/* Update the displayed rank & the rankorder data element used by the isotope sort function */
+		$(this.el).children('.rank').text(this.model.get('currentranking'));
+		$(this.el).data('rankorder', this.model.get('rankorder'));
+		/* Display the result for each bloc */
+		r_el = $(this.el).children('span.resultsblock');
+		i = (this.model.get('topsArray')).length;
+		while (i--) {
+			btemp = bArr[i]; ttemp = tArr[i];
+			(btemp>0) ? $(r_el).children('span.bonus:eq('+i+')').addClass('BLight') : $(r_el).children('span.bonus:eq('+i+')').removeClass('BLight').removeClass('RText');
+			(ttemp>0) ? $(r_el).children('span.top:eq('+i+')').addClass('TLight') : $(r_el).children('span.top:eq('+i+')').removeClass('TLight').removeClass('RText');
+			if (btemp === 0 || ttemp === 0) $(r_el).children('span.top:eq('+i+')').addClass('RText');
+		}
+		/* 	If T == 0 || B == 0, hide the attempts data */
+		a_el = $(this.el).children('span.attemptsblock');
+		n = this.model.get('battempts');	$(a_el).children('span.BA').text(n ? n : ' ');
+		n = this.model.get('tattempts');		$(a_el).children('span.TA').text(n ? n : ' ');
+		//	txt = this.model.get('tattempts') ? this.model.get('tattempts') : ' ';
+		//	$(a_el).children('span.TA').text(txt ? txt : ' ');
+		return this;
 	}
 });
 /*!
  * Startlist/Resultslist model extending Backbone.js 'Collection' class
  */	
 var ResultsList = Backbone.Collection.extend({
-	url				: '../f_display/scripts/GetResults.php',
+	url				: '../f_display/scripts/',
 	model			: Climber,
 	counterValue	: 0,
 	categoryTag		: 'm',
+	qualGroup		: null,
 	numberOfBlocs	: 4,
 	// Instance Props: (str)categoryTag, (int)numberOfBlocs,(bool)useCountback 		-> init & set by this::load()
 	/* Get startlist data from the server */
 	load: function(options){
 		var obj = this;
 		if(options.categoryTag) this.categoryTag = options.categoryTag;
-		if(options.numberOfBlocs) this.numberOfBlocs = options.numberOfBlocs;
+		if(options.qualGroup) {
+			this.qualGroup 	   = options.qualGroup;
+			this.numberOfBlocs = 5;
+		}
 		/* Interrogate the results database */
 		$.ajax({
-			url: obj.url,
+			url: (obj.url)+'GetClimberData.php',
 			type: 'GET',
-			data: ({ 'category': obj.categoryTag }),
+			data: ({ 'category': obj.categoryTag, 'group': obj.qualGroup }),
 			dataType: 'json',
 			async: false,
 			success: function(data){
@@ -78,9 +128,9 @@ var ResultsList = Backbone.Collection.extend({
 		var obj = this;
 		options || (options = {});
 		$.ajax({
-			url: obj.url,
+			url: (obj.url)+'GetResultsData.php',
 			type: 'GET',
-			data: ({ 'category': obj.categoryTag, 'getResults': true, 'counter': obj.counterValue }),
+			data: ({ 'category': obj.categoryTag, 'group': obj.qualGroup, 'counter': obj.counterValue }),
 			dataType: 'json',
 			async: false, 
 			success: function(data){
@@ -124,53 +174,6 @@ var ResultsList = Backbone.Collection.extend({
 		return this;	
 	}
 });
-
-/*!
- * Climber view extending Backbone.js 'View' class
- */
-var ClimberView = Backbone.View.extend({
-	tagName: 'li',
-	className: 'sortablelist',
-	/* Link the view to events on its associated model */
-	initialize: function(){
-		_.bindAll(this, 'render', 'update');		// shorthand for: this.render = _.bind(this.render, this); this.update = _.bind(this.update, this);
-		this.model.bind('refresh', this.render );
-		this.model.bind('change', this.update);
-	},
-	/* Render the view when the linked model is first loaded */
-	render: function(n){
-		var tmpl, str;
-		tmpl = "<span class='rank'><%=rank %></span><span class='name'><%=name %></span><span class='code'><%=code %></span><span class='resultsblock'><% while(i--){ %> <span class='top'>X</span> <% }; %><% while(j--){ %> <span class='bonus'>&nbsp;</span> <% } %></span><span class='attemptsblock'><span class='TA'>&nbsp;</span><span class='BA'>&nbsp;</span></span>";
-		str = _.template(tmpl, { i : n, j : n, rank: this.model.get('qranking'), name: this.model.get('name'), code : this.model.get('countrycode') });
-		$(this.el).html(str);
-		this.update();
-		return this;
-	},
-	/* Update the view when the linked model is updated  */
-	update: function(){
-		var i, btemp, ttemp, n, r_el, a_el;
-		var tArr = this.model.get('topsArray'), bArr = this.model.get('bonusArray');
-		/* Update the displayed rank & the rankorder data element used by the isotope sort function */
-		$(this.el).children('.rank').text(this.model.get('currentranking'));
-		$(this.el).data('rankorder', this.model.get('rankorder'));
-		/* Display the result for each bloc */
-		r_el = $(this.el).children('span.resultsblock');
-		i = (this.model.get('topsArray')).length;
-		while (i--) {
-			btemp = bArr[i]; ttemp = tArr[i];
-			(btemp>0) ? $(r_el).children('span.bonus:eq('+i+')').addClass('BLight') : $(r_el).children('span.bonus:eq('+i+')').removeClass('BLight').removeClass('RText');
-			(ttemp>0) ? $(r_el).children('span.top:eq('+i+')').addClass('TLight') : $(r_el).children('span.top:eq('+i+')').removeClass('TLight').removeClass('RText');
-			if (btemp === 0 || ttemp === 0) $(r_el).children('span.top:eq('+i+')').addClass('RText');
-		}
-		/* 	If T == 0 || B == 0, hide the attempts data */
-		a_el = $(this.el).children('span.attemptsblock');
-		n = this.model.get('bonusattempts');	$(a_el).children('span.BA').text(n ? n : ' ');
-		n = this.model.get('topattempts');		$(a_el).children('span.TA').text(n ? n : ' ');
-		//	txt = this.model.get('topattempts') ? this.model.get('topattempts') : ' ';
-		//	$(a_el).children('span.TA').text(txt ? txt : ' ');
-		return this;
-	}
-});
 /*!
  * ResultsList view extending Backbone.js 'View' class
  */
@@ -206,9 +209,9 @@ var ResultsListView = Backbone.View.extend({
 		// Initialise isotope for the element
 		$(this.el).isotope({
 			itemSelector: 'li.sortablelist',
-			animationEngine : 'best-available',
+			animationEngine : 'best-available', /* 'best-available' defaults to 'css' where available and 'jquery' otherwise */ 
+//			animationEngine : 'best-available', /* 'best-available' defaults to 'css' where available and 'jquery' otherwise */ 
 			getSortData: {
-//				rankorder: function($el){ return parseInt( $el.find('.rank').text(), 10); },
 				rankorder: function($el){ return parseInt( $el.data('rankorder'), 10); },
 			}
 		});		
@@ -251,8 +254,9 @@ var ResultsListView = Backbone.View.extend({
 var Results = Backbone.Controller.extend({
 	el: '#inner',
 	initialize: function(options){
+		var elementID = options.categoryTag+options.qualGroup;
 		this.results = new ResultsList().load(options);
-		this.view = new ResultsListView({ collection : this.results , el : this.render(options.categoryTag) }).render();
+		this.view = new ResultsListView({ collection : this.results , el : this.render(elementID) }).render();
 		if(options.displayQuota){
 			this.view.displayCounter = this.view.displayQuota = options.displayQuota;
 		} 
@@ -267,6 +271,8 @@ var Results = Backbone.Controller.extend({
 	/* Update the results and the view */
 	update: function(){
 		// Disable the event linkage between results and view
+		// TODO : Test whether this is necessary - suspect that with the current stapling of updates & screen refreshes it is not, but that the decoupling was kept in case collection updates and view updates is separated in the future
+		// Or try replacing these two lines with this.results.update();
 		this.results.update({'silent':true}); 
 		this.view.sort();
 	}
@@ -284,6 +290,7 @@ var Results = Backbone.Controller.extend({
 		options || (options = {});
 		var s = options.vertical ? screen.height/1280 : screen.width/1024;
 		if (s>1) return;
+		// TODO: Avoid using .css for scaling - Possible conflict with isotope engine?
 		$('body').css({ '-webkit-transform': 'scale('+s+')', '-moz-transform': 'scale('+s+')'});	// 
 //		$('body').css({ 'zoom': 0.7 });	
 	}

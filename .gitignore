@@ -1,11 +1,12 @@
-#Image files
-.png
-.jpg
-.gif
-
 #Journal files
 .DS_Store
 
+#Image files
+*.png
+*.jpg
+*.gif
+
 #Binary and other data
-.sqlite
-.tmproj
+*.sqlite
+*.tmproj
+*.zip

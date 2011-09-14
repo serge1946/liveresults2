@@ -25,17 +25,21 @@
 			/* Execute main() when the DOM is ready */
 			$(document).ready(function(){
 				var idx, headings, el;
+
 				/* Initialise the display */
 				idx = $('input[name=tabgroup]').index($('input[name=tabgroup]:checked'));
 				$('.pane').css('display','none').eq(idx).css('display','block');
+
 				/* Set the visibility of tabs in each 'action' of the first pane */
 				el = $('#inner>div.osx-container').find('.osx-modal-data');
 				$(el).find('ul.tabs li:first').addClass("active").show();
 				$(el).find('.tab_content').hide();
 				$(el).find('.tab_content:first').show();
+
 				/* Localise the page */
 				var opts = { pathPrefix: "lang", skipLanguage: /^en/ };
 				$("[rel*=localize]").localize("ui", opts);		
+
 				/* EVENT HANDLERS */
 				/* Event handlers - Top level menu */
 				$('input[name=tabgroup]').click(function(){ 
@@ -43,21 +47,15 @@
 					idx = $('input[name=tabgroup]').index($('input[name=tabgroup]:checked'));
 					$('.pane').eq(idx).fadeIn('slow');
 				});
+
 				/* Event handlers - Pane 1 */				
 				settings_listener();	// -> JSSettings.js
+
 				/* Event handlers - Pane 2 */
-				$('#ipod_link').click(function(){ window.location = "../app_mobile/phone.php"; });				
-				$('#ipad_link').click(function(){ window.location = "../app_tablet/index.html"; });				
-				$('#book_link').click(function(){ window.location = "../app_tablet/index.html"; });				
+				results_listener();
+
 				/* Event handlers - Pane 3 */
-				$('#link_20').click(function(){ 
-					var theRound = $('input[name=radiogroup]:checked').val(); 
-					window.location = (theRound == 'qualification') ? "../q_display/qual_m1.html" : "../f_display/semi_m.html"; 
-				});				
-				$('#link_07').click(function(){
-					var theRound = $('input[name=radiogroup]:checked').val(); 
-					window.location = (theRound == 'qualification') ? "../q_display/qual_m.html" : "../f_display/final_c.html"; 
-				});				
+				display_listener();
 			});
 		</script>
 	</head>
@@ -103,7 +101,8 @@
 										<button id="submit3" class="alignright">Import</button>
 									</div>
 									<div class='input_data'>
-										<form id="import_form" action="./scripts/JSSettings_UploadFile.php" method="get" enctype="multipart/form-data">
+										<!-- TODO: Check the UploadFile PHP script -->
+										<form id="import_form" action="./scripts/JSS_UploadFile.php" method="post" enctype="multipart/form-data">
 											<label for="file" rel="localize[pane1.c2.str2]">Select a CSV file:</label><input type="file" name="userfile" id="file"/>
 										<!--<input class="invisible" type="text" name='theRound'/>-->
 											<input type="submit" class="alignright" value="Import" rel="localize[buttons.import]"/>
@@ -114,6 +113,7 @@
 								<!-- EDIT -->
 								<div class='tab_content' id='tab12'>
 									<label class="alignleft" for="category" rel="localize[pane1.c2.query.catg]">Category:</label><input type="text" id="category" size="3" maxlength="3" />
+									<label for="group" rel="localize[pane1.c2.query.grp]">&nbsp;Group:</label><input type="number" id="group" size="4" maxlength="3"/>
 									<label for="starter" rel="localize[pane1.c2.query.strt]">&nbsp;Startnumber:</label><input type="number" id="starter" size="4" maxlength="3"/><br/>
 									<label class="alignleft" for="name" rel="localize[pane1.c2.query.name]">Name:</label><input type="text" id="name" size="20" maxlength="20"/>
 									<label for="code" rel="localize[pane1.c2.query.code]">Country:</label><input type="text" id="code" size="4" maxlength="3"/>

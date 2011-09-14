@@ -18,13 +18,10 @@
 		<script type="text/javascript">
 			$(document).ready(function(){
 				var test = new SuperView();
-				test.addview(new Results({ 'categoryTag': 'm', 'numberOfBlocs': 4 })); // .show();
-				test.addview(new Results({ 'categoryTag': 'f', 'numberOfBlocs': 4 }));
-				test.addview(new Results({ 'categoryTag': 'm1', 'numberOfBlocs': 5 }));
-				test.addview(new Results({ 'categoryTag': 'm2', 'numberOfBlocs': 5 }));
-				test.addview(new Results({ 'categoryTag': 'f1', 'numberOfBlocs': 5 }));
-				test.addview(new Results({ 'categoryTag': 'f2', 'numberOfBlocs': 5 }));
-				test.show();
+				test.addview(new Results({ 'categoryTag': 'm', 'qualGroup': 1 })).show();
+				test.addview(new Results({ 'categoryTag': 'm', 'qualGroup': 2 }));
+				test.addview(new Results({ 'categoryTag': 'f', 'qualGroup': 1 }));
+				test.addview(new Results({ 'categoryTag': 'f', 'qualGroup': 2 }));
 			});
 		</script>
 	</body>

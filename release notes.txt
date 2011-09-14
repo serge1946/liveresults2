@@ -1,0 +1,15 @@
+TODO : Complete iPad/iPhone code checks.
+TODO : Complete data downloading (from eGroupware) & uploading (from file).
+TODO : Replace the setinterval() call in *.html by a Server Sent Event mechanic. This would involve (a)  deleting the setinterval() call in its entirety (b) replacing the $.ajax call within collection::update() by a call to $.eventSource(). Look at the decoupling of collection.update() and view.sort()...
+
+TODO : Update to v0.5.x of backbone.js - Checks require (from the backbone release notes) re. "Upgrading to 0.5.0+ We've taken the opportunity to clarify some naming with the 0.5.0 release. Controller is now Router, and refresh is now reset. The previous saveLocation and setLocation functions have been replaced by navigate. Backbone.sync's method signature has changed to allow the passing of arbitrary options to jQuery.ajax. Be sure to opt-in to pushState support, if you want to use it."
+
+CHANGELOG: SQL database restructured with all results in a single table (replacing separate tables for each category and round). Database schema modified to separate category ('m' or 'f') from the round (now 'qualification1', 'qualification2', 'semifinal' and 'final'). General settings such as the competition ID, the currently active round and the update counters now located in restructured table entitled 'settings'. In-database counters are now updated automatically via SQL 'triggers' and do not require separate updating.
+
+CHANGELOG: Results display code modified for refactored SQL database structure.
+
+CHANGELOG: Results Display - jquery.isotope library references updated to version 1.4. Added '-webkit-font-smoothing: subpixel-antialiased;' to display .css in order to force similar font display across windows/mac systems 
+
+CHANGELOG: Tablet interface code modified for refactored SQL database structure.
+
+CHANGELOG: Mobile interface code modified for refactored SQL database structure.

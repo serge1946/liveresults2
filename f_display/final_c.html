@@ -22,14 +22,14 @@
 				
 				/* Initialise the results */
 				var resultsArray = [];
-				resultsArray.push(new Results({ 'categoryTag': 'm', 'numberOfBlocs': 4 }));
-				resultsArray.push(new Results({ 'categoryTag': 'f', 'numberOfBlocs': 4 }));
+				resultsArray.push(new Results({ 'categoryTag': 'm' }));
+				resultsArray.push(new Results({ 'categoryTag': 'f' }));
 				
 				/* Localise text elements within the page specified by [rel="localize[variable]"]  */
 				$.localiseWindow();
 				
 				/* Update the results */
-				setInterval(function(){ _(resultsArray).each(function(results){ results.update()}) }, 5000 );
+		<!--	setInterval(function(){ _(resultsArray).each(function(results){ results.update()}) }, 5000 ); -->
 			});
 		</script>
 	</body>

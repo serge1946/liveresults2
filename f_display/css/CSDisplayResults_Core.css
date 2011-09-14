@@ -41,13 +41,19 @@ li {
 	border-radius: 12px; 	-moz-border-radius: 12px; 		-webkit-border-radius: 12px;
 	/* Text Description*/
 	font: 23px/38px BitstreamVeraSansRoman, Verdana, sans-serif;
+	font-weight:normal;
+	/*
+	 * Safari 4, Safari 5, Chrome all use different font smoothing options by default (subpixel-antialiased/antialiased/subpixel-antialiased respectively)
+	 * Explicitly specify font smoothing to ensure consistent presentation between browsers 
+	 */
+	-webkit-font-smoothing: subpixel-antialiased;
 /*	letter-spacing:0.08em; 	/* kerning */
 	text-align: center;
 	background-color : #1e1d1d;
 }
 li.listheaderM 	{ background-color : #004894; }
 li.listheaderF 	{ background-color : #940048; } 
-li.sortablelist {  }
+li.sortablelist { }
 
 /* CLIMBER INFORMATION */
 .rank {
@@ -150,3 +156,4 @@ li.sortablelist {  }
 	color: #e5d5d5;
 	background-color : #1e1d1d;
 }
+

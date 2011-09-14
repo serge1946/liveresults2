@@ -34,12 +34,12 @@ function main() {
 		theBlocNumber = $(this).attr('id');
 		var newtext = $(this).text();
 		$('#theBlocNumber').text(newtext);
-		var categoryID = theCategory.charAt(0);
-		$.getJSON('scripts/JSInputResults_GetResults.php', {'category' : categoryID, 'boulder_id' : theBlocNumber}, function(data){
+		var categoryID = theCategory;
+		$.getJSON('scripts/JSI_GetResults.php', {'category' : categoryID, 'boulder_id' : theBlocNumber}, function(data){
 			for (var i=0, len=data.length; i<len; i++){
-				theResultsArray[i] = { "startnumber": i+1,"topattempts": data[i].topattempts, "bonusattempts": data[i].bonusattempts };
-				$('#TA_'+i).val(theResultsArray[i].topattempts);
-				$('#BA_'+i).val(theResultsArray[i].bonusattempts);
+				theResultsArray[i] = { "startnumber": i+1,"tattempts": data[i].tattempts, "battempts": data[i].battempts };
+				$('#TA_'+i).val(theResultsArray[i].tattempts);
+				$('#BA_'+i).val(theResultsArray[i].battempts);
 			};
 		});
 	});
@@ -51,13 +51,14 @@ function main() {
 		var theFormContents = [];
 		// Get the form contents and check them against previously submitted data
 		for (var i=theResultsArray.length-1; i>=0; i--){
-			theFormContents[i] = { "startnumber": i+1, "topattempts": parseInt($('#TA_'+i).val(),10), "bonusattempts": parseInt($('#BA_'+i).val(),10) };
+			theFormContents[i] = { "startnumber": i+1, "tattempts": parseInt($('#TA_'+i).val(),10), "battempts": parseInt($('#BA_'+i).val(),10) };
 			(JSON.stringify(theResultsArray[i], null) === JSON.stringify(theFormContents[i], null)) ? theFormContents.splice(i, 1) : theResultsArray[i] = theFormContents[i];
 		};		
 		// If any data has changed, POST to the server... 
 		if (theFormContents.length>0) {
 			var theOutputJSON = JSON.stringify(theFormContents, null);
-			var categoryID = theCategory.charAt(0);
+			window.console.log(theOutputJSON);
+			var categoryID = theCategory;
 			$("#category_id").val(categoryID);
 			$("#boulder_id").val(theBlocNumber);
 			$("#zip").val(theOutputJSON);

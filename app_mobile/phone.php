@@ -6,18 +6,18 @@
 		<!-- CSS Styling -->
 		<style type="text/css" media="screen">
 			/* jQTouch base CSS */
-			@import url('css/jqtouch.min.css');
-			@import url('css/jqtouch_theme.min.css');
+			@import url('./css/jqtouch.min.css');
+			@import url('./css/jqtouch_theme.min.css');
 			/* Structural Layout */
 			@import url('css/CSInputResults.css');
 		</style>
 		<!-- Javascript -->
-		<script type="text/javascript" src="js/jquery-1.4.4.min.js"></script>
-		<script type="text/javascript" src="js/json2.min.js"></script>
+		<script type="text/javascript" src="./js/jquery-1.4.4.min.js"></script>
+		<script type="text/javascript" src="./js/json2.min.js"></script>
 		<script type="text/javascript" src="./js/jquery.localize.js"></script>
-		<script type="text/javascript" src="js/jqtouch.min.js"></script>
+		<script type="text/javascript" src="./js/jqtouch.min.js"></script>
 
-		<script type="text/javascript" src="js/JSInputResults.js" ></script>
+		<script type="text/javascript" src="./js/JSInputResults.js" ></script>
 	</head>
 	<body>
 		<div id="home" class="current">
@@ -52,7 +52,7 @@
 		</div>	
 		<!-- Results List -->
 		<div id="bloc">
-	        <form action="./scripts/JSInputResults_SetResults.php" method="POST" class="form"> <!-- JSInputResults_SetResults.php -->
+	        <form action="./scripts/JSI_SetResults.php" method="POST" class="form"> <!-- JSInputResults_SetResults.php -->
 				<div class="toolbar">
 					<h1 id="theBlocNumber">Startlist</h1><a href="#" class="back">Home</a>
 					<a href="#bloc" class="button blueButton submit" id="submitMenuButton">Submit</a>
@@ -63,13 +63,11 @@
 					<ul class="edit rounded" id="cat_Male">
 						<?php
 							$db = new SQLite3('../core_data/results.sqlite');
-							$round = $db->querySingle("SELECT round FROM globals WHERE rowid='1'");
-							$theResults = "m_".$round;
-							$theCount = $db->querySingle("SELECT COUNT() FROM $theResults");
+							$theCount = $db->querySingle("SELECT COUNT() FROM results WHERE round = (SELECT round FROM settings WHERE status) AND category ='m'");
 							for ($i=0; $i<$theCount; $i++) {
 								$j = ($i+1) * 2;
 								$k = $j - 1;
-								$theName = $db->querySingle("SELECT name FROM $theResults WHERE startnumber = '$i'+1");
+								$theName = $db->querySingle("SELECT name FROM results WHERE round = (SELECT round FROM settings WHERE status) AND category = 'm' AND startnumber = '$i'+1");
 								echo "<li><span class='CSSNameText'>$theName</span><input type='number' placeholder='Top' id='TA_$i' tabindex='$j' class='CSSInputField' /><input type='number' placeholder='Bonus' id='BA_$i' tabindex='$k' class='CSSInputField' /></li>\n";
 							}
 						?>
@@ -90,13 +88,11 @@
 			<ul class="edit rounded" id="cat_Female">
 				<?php
 					$db = new SQLite3('../core_data/results.sqlite');
-					$round = $db->querySingle("SELECT round FROM globals WHERE rowid='1'");
-					$theResults = "f_".$round;
-					$theCount = $db->querySingle("SELECT COUNT() FROM $theResults");
+					$theCount = $db->querySingle("SELECT COUNT() FROM results WHERE round = (SELECT round FROM settings WHERE status) AND category = 'f'");
 					for ($i=0; $i<$theCount; $i++) {
 						$j = ($i+1) * 2;
 						$k = $j - 1;
-						$theName = $db->querySingle("SELECT name FROM $theResults WHERE startnumber = '$i'+1");
+						$theName = $db->querySingle("SELECT name FROM results WHERE round = (SELECT round FROM settings WHERE status) AND category = 'f' AND startnumber = '$i'+1");
 						echo "<li><span class='CSSNameText'>$theName</span><input type='number' placeholder='Top' id='TA_$i' tabindex='$j' class='CSSInputField' /><input type='number' placeholder='Bonus' id='BA_$i' tabindex='$k' class='CSSInputField' /></li>\n";
 					}
 				?>

@@ -1,0 +1,34 @@
+/**** ISOTOPE ****/
+
+/**** Isotope CSS3 transitions ****/
+
+.isotope,
+.isotope .isotope-item {
+  -webkit-transition-duration: 0.8s;
+     -moz-transition-duration: 0.8s;
+/*     -o-transition-duration: 0.8s;*/
+          transition-duration: 0.8s;
+
+}
+.isotope {
+  -webkit-transition-property: height, width;
+     -moz-transition-property: height, width;
+/*     -o-transition-property: height, width;*/
+          transition-property: height, width;
+}
+
+/**** Isotope filtering ****/
+
+.isotope-item {
+  z-index: 2;
+}
+
+.isotope-hidden.isotope-item {
+  pointer-events: none;
+  z-index: 1;
+}
+
+.filter_b {
+	color: #e5d5d5;
+	background-color : #1e1d1d;
+}
