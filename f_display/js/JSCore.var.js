@@ -123,34 +123,20 @@ var ResultsList = Backbone.Collection.extend({
 		});
 		return this;
 	},
-	/* Update the results - update([options]) where options.silent == true prevents an update event being posted */
-	update: function(options){
-		var obj = this;
+	/* Update the results - update([options], data) where options.silent == true prevents an update event being posted; data is the relevant results data */
+	update: function(data, options){
 		options || (options = {});
-		$.ajax({
-//		Quick Hint on the modification needed to move the update/sort loop into the collection, though a long polling or SSE option would be better... 			
-//		setInterval(function(){ $.ajax({  // We could use an inner timer loop or Server Sent Event here, but at the expense of some flexibility in the view refresh...
-			url: (obj.url)+'GetResultsData.php',
-			type: 'GET',
-			data: ({ 'category': obj.categoryTag, 'group': obj.qualGroup, 'counter': obj.counterValue }),
-			dataType: 'json',
-			async: false, 
-			success: function(data){
-				if (data){
-					obj.counterValue = data.counterValue;
-					_(data.results).each(function(result){
-						var model = obj.get(result.startnumber);
-						model.set({ 
-							'topsArray' : (result.topsArray).slice(0, obj.numberOfBlocs),
-							'bonusArray': (result.bonusArray).slice(0, obj.numberOfBlocs)
-						 });
-						model.setResults(obj.numberOfBlocs);
-					});
-					obj.sort(options);
-				}
-			}
-//		}) }, 5000);
-		});		
+		var obj = this;
+		obj.counterValue = data.counterValue;
+		_(data.results).each(function(result){
+			var model = obj.get(result.startnumber);
+			model.set({ 
+				'topsArray' : (result.topsArray).slice(0, obj.numberOfBlocs),
+				'bonusArray': (result.bonusArray).slice(0, obj.numberOfBlocs)
+			 });
+			model.setResults(obj.numberOfBlocs);
+		});
+		obj.sort(options);
 		return this;
 	},
 	/* Custom sort function for bouldering */
@@ -259,15 +245,12 @@ var Results = Backbone.View.extend({
 	initialize: function(options){
 		var elementID = options.categoryTag+options.qualGroup;
 		this.results = new ResultsList().load(options);
-//		window.console.log(this.results.length);
-//		if (this.results.length){
-			this.view    = new ResultsListView({ collection : this.results , el : this.render(elementID) }).render();
-			if(options.displayQuota){
-				this.view.displayCounter = this.view.displayQuota = options.displayQuota;
-			} 
-			this.results.update();			
-//		}
-//		this.update();
+		this.view    = new ResultsListView({ collection : this.results , el : this.render(elementID) }).render();
+		if(options.displayQuota){
+			this.view.displayCounter = this.view.displayQuota = options.displayQuota;
+		} 
+//		this.results.update();
+		this.update();
 	},
 	/* scratch render function - think about refactoring this to avoid the need to specify an element ID */
 	render: function(id){
@@ -279,8 +262,20 @@ var Results = Backbone.View.extend({
 	update: function(){
 		// RADAR : This is a relatively simple implementation of a 'manually stapled' update (suppressing the trigger event of the collection::update() function) and sort. A more sophisticated alternative would be to split the collection::filter() function in two, separating the true sorting from the results scrolling element, putting the the update and sort into one loop and the scrolling function into a second loop. Such a separation would allow the collection::update() call to use either long-polling or Server Sent Event techniques to collect new data with trivial latency while keeping the scrolling function on a longer timebase... Ultimately, this function (here) would disappear, being subsumed by the initialize function.
 		var obj = this;
-		obj.results.update({'silent':true}); 	// Update the data but suppress any trigger event
-		obj.view.sort();						// Sort the data
+		setInterval(function(){
+			$.ajax({
+				url: '../f_display/scripts/GetResultsData.php',
+				type: 'GET',
+				data: ({ 'category': (obj.results).categoryTag, 'group': (obj.results).qualGroup, 'counter': (obj.results).counterValue }),
+				dataType: 'json',
+				async: false, 
+				success: function(data){ 
+//				if (data) obj.results.update({'silent':true}, data); 	// Update the data but suppress any trigger event
+				(data) ? obj.results.update(data) : obj.view.sort();
+				}
+			});
+//			obj.view.sort();										// Sort the data
+		}, 5000);
 	}
 });
 

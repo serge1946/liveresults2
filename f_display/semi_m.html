@@ -27,7 +27,7 @@
 				/* Localise text elements within the page specified by [rel="localize[variable]"]  */
 				$.localiseWindow();
 				
-				/* Update the results */
+				/* Update the results - Using a single setInterval() function should help synchronise the view updates */
 				setInterval(function(){ _(resultsArray).each(function(results){ results.update()}) }, 5000 );
 			});
 		</script>

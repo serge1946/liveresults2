@@ -7,7 +7,7 @@
 	/*
 	 * PHP code to pull results data from refactored sqlite database
 	 */
-	$category = (isset($_GET['category'])) ? $_GET['category'] : 'f';
+	$category = (isset($_GET['category'])) ? $_GET['category'] : 'm';
 	$group    = (isset($_GET['group']))    ? $_GET['group']	   : 0;
 	$oldCount = (isset($_GET['counter']))  ? $_GET['counter']  : 16;
 	
@@ -23,6 +23,8 @@
 	$count = $db->querySingle($query.$round);
 	if ($oldCount == $count) {
 		echo 'retry: 5000'."\n";
+//		$out = json_encode(array('cat'=>$category));
+//		echo 'data: '.$out."\n";
 		return;
 	} 
 	// Otherwise, fetch the Results data
