@@ -249,9 +249,9 @@ var ResultsListView = Backbone.View.extend({
 });
 
 /*!
- * Results object extending Backbone.js 'Controller' class (needs refactoring?)
+ * Results object extending Backbone.js 'View' class (needs refactoring?)
  */
-var Results = Backbone.Controller.extend({
+var Results = Backbone.View.extend({
 	el: '#inner',
 	initialize: function(options){
 		var elementID = options.categoryTag+options.qualGroup;
