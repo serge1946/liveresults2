@@ -1,4 +1,3 @@
-TODO : Test results updating with ajax as async = true and = false
 TODO : Complete iPad/iPhone code checks.
 TODO : Complete data downloading (from eGroupware) & uploading (from file).
 TODO : Replace the setinterval() call in *.html by a Server Sent Event mechanic. This would involve (a)  deleting the setinterval() call in its entirety (b) replacing the $.ajax call within collection::update() by a call to $.eventSource(). Look at the decoupling of collection.update() and view.sort()...
@@ -14,4 +13,3 @@ CHANGELOG: Results Display - jquery.isotope library references updated to versio
 CHANGELOG: Tablet interface code modified for refactored SQL database structure.
 
 CHANGELOG: Mobile interface code modified for refactored SQL database structure.
-

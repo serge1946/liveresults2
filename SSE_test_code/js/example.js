@@ -1,28 +1,23 @@
 $(function () {
+	var val = 'input variable';
+	console.log( "message" );
 
+	// JSON EXAMPLE - HAS CONTENT TYPE
 	$.eventsource({
-		url		: './scripts/PushResultsData.php',
-		data	: {category : 'm' },
-//		url		: (obj.url)+'PushResultsData.php',
-//		data: ({ 'category': obj.categoryTag, 'group': obj.qualGroup, 'counter': obj.counterValue }),
+		label: 'json-event-source',
+		url: './scripts/event-source-2.php?cat=m',
 		dataType: 'json',
 		open: function() {
-			console.log( 'server connection opened' );
+		//	console.group('$.eventsource() - Example 3 : JSON open callback');
+			console.log( 'opened: '+val );
+		//	console.groupEnd('$.eventsource() - Example 3 : JSON open callback');
 		},
 		message: function(data) {
+		//	console.group('$.eventsource() - Example 3 : JSON message callback');
 			console.log( 'message received' );
 			console.log(data);
-//			obj.counterValue = data.counterValue;
-//			_(data.results).each(function(result){
-//				var model = obj.get(result.startnumber);
-//				model.set({ 
-//					'topsArray' : (result.topsArray).slice(0, obj.numberOfBlocs),
-//					'bonusArray': (result.bonusArray).slice(0, obj.numberOfBlocs)
-//				 });
-//				model.setResults(obj.numberOfBlocs);
-//			});
-//			obj.sort(options);
+		//	console.groupEnd('$.eventsource() - Example 3 : JSON message callback');
+		//	$.eventsource('close', 'json-event-source');
 		}
 	});
-
 });

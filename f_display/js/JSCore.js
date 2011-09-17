@@ -76,7 +76,7 @@ var ClimberView = Backbone.View.extend({
 		/* 	If T == 0 || B == 0, hide the attempts data */
 		a_el = $(this.el).children('span.attemptsblock');
 		n = this.model.get('battempts');	$(a_el).children('span.BA').text(n ? n : ' ');
-		n = this.model.get('tattempts');	$(a_el).children('span.TA').text(n ? n : ' ');
+		n = this.model.get('tattempts');		$(a_el).children('span.TA').text(n ? n : ' ');
 		//	txt = this.model.get('tattempts') ? this.model.get('tattempts') : ' ';
 		//	$(a_el).children('span.TA').text(txt ? txt : ' ');
 		return this;
@@ -128,8 +128,6 @@ var ResultsList = Backbone.Collection.extend({
 		var obj = this;
 		options || (options = {});
 		$.ajax({
-//		Quick Hint on the modification needed to move the update/sort loop into the collection, though a long polling or SSE option would be better... 			
-//		setInterval(function(){ $.ajax({  // We could use an inner timer loop or Server Sent Event here, but at the expense of some flexibility in the view refresh...
 			url: (obj.url)+'GetResultsData.php',
 			type: 'GET',
 			data: ({ 'category': obj.categoryTag, 'group': obj.qualGroup, 'counter': obj.counterValue }),
@@ -146,11 +144,10 @@ var ResultsList = Backbone.Collection.extend({
 						 });
 						model.setResults(obj.numberOfBlocs);
 					});
-					obj.sort(options);
+				obj.sort(options);
 				}
 			}
-//		}) }, 5000);
-		});		
+		});
 		return this;
 	},
 	/* Custom sort function for bouldering */
@@ -252,22 +249,18 @@ var ResultsListView = Backbone.View.extend({
 });
 
 /*!
- * Results object extending Backbone.js 'View' class (needs refactoring?)
+ * Results object extending Backbone.js 'Controller' class (needs refactoring?)
  */
-var Results = Backbone.View.extend({
+var Results = Backbone.Controller.extend({
 	el: '#inner',
 	initialize: function(options){
 		var elementID = options.categoryTag+options.qualGroup;
 		this.results = new ResultsList().load(options);
-//		window.console.log(this.results.length);
-//		if (this.results.length){
-			this.view    = new ResultsListView({ collection : this.results , el : this.render(elementID) }).render();
-			if(options.displayQuota){
-				this.view.displayCounter = this.view.displayQuota = options.displayQuota;
-			} 
-			this.results.update();			
-//		}
-//		this.update();
+		this.view = new ResultsListView({ collection : this.results , el : this.render(elementID) }).render();
+		if(options.displayQuota){
+			this.view.displayCounter = this.view.displayQuota = options.displayQuota;
+		} 
+		this.results.update();
 	},
 	/* scratch render function - think about refactoring this to avoid the need to specify an element ID */
 	render: function(id){
@@ -275,12 +268,13 @@ var Results = Backbone.View.extend({
 		$(this.el).append( _.template(tmpl, { tag : id }));
 		return $('#'+id);
 	},
-	/* Update the results and the view (NOT USED) */
+	/* Update the results and the view */
 	update: function(){
-		// RADAR : This is a relatively simple implementation of a 'manually stapled' update (suppressing the trigger event of the collection::update() function) and sort. A more sophisticated alternative would be to split the collection::filter() function in two, separating the true sorting from the results scrolling element, putting the the update and sort into one loop and the scrolling function into a second loop. Such a separation would allow the collection::update() call to use either long-polling or Server Sent Event techniques to collect new data with trivial latency while keeping the scrolling function on a longer timebase... Ultimately, this function (here) would disappear, being subsumed by the initialize function.
-		var obj = this;
-		obj.results.update({'silent':true}); 	// Update the data but suppress any trigger event
-		obj.view.sort();						// Sort the data
+		// Disable the event linkage between results and view
+		// TODO : Test whether this is necessary - suspect that with the current stapling of updates & screen refreshes it is not, but that the decoupling was kept in case collection updates and view updates is separated in the future
+		// Or try replacing these two lines with this.results.update();
+		this.results.update({'silent':true}); 
+		this.view.sort();
 	}
 });
 
@@ -296,7 +290,7 @@ var Results = Backbone.View.extend({
 		options || (options = {});
 		var s = options.vertical ? screen.height/1280 : screen.width/1024;
 		if (s>1) return;
-		// RADAR: Avoid using .css for scaling - Possible conflict with isotope engine?
+		// TODO: Avoid using .css for scaling - Possible conflict with isotope engine?
 		$('body').css({ '-webkit-transform': 'scale('+s+')', '-moz-transform': 'scale('+s+')'});	// 
 //		$('body').css({ 'zoom': 0.7 });	
 	}
