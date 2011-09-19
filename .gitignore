@@ -1,5 +1,6 @@
 #Journal files
 .DS_Store
+.gitignore
 
 #Image files
 *.png
