@@ -5,7 +5,7 @@
 /* 
  * TODO : (1) Refactoring to permit properly asynchrous GET calls on load/update
  * TODO : (2) Refactor Results/SuperView classes into a single AppView class
- * TODO : (3) Properly deal with touch events (this may be as simple as switching to ZEPTO from JQUERY)
+ * TODO : (3) Add 'ontouch' event handler 
  */
 /*!
  *	Climber model extending Backbone.js 'Model' class
