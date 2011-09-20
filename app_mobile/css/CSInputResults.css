@@ -14,10 +14,10 @@
 ul li input[type="number"]{
     color: #777;
     background: #fff  url(../.png); 
-    border: 0;
     font: normal 17px Helvetica;
-    padding: 0;
     display: inline-block;
+    padding: 0;
+    border: 0;
     margin-left: 0px;
     -webkit-appearance: textarea;
 

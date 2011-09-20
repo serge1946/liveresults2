@@ -7,7 +7,7 @@
  * Date: 
  */
 
-var theResultsArray = [];								// the Results Array
+var resultsArray = [];								// the Results Array
 /* 
  * main() & common event functions
  */
@@ -37,9 +37,9 @@ function main() {
 		var categoryID = theCategory;
 		$.getJSON('scripts/JSI_GetResults.php', {'category' : categoryID, 'boulder_id' : theBlocNumber}, function(data){
 			for (var i=0, len=data.length; i<len; i++){
-				theResultsArray[i] = { "startnumber": i+1,"tattempts": data[i].tattempts, "battempts": data[i].battempts };
-				$('#TA_'+i).val(theResultsArray[i].tattempts);
-				$('#BA_'+i).val(theResultsArray[i].battempts);
+				resultsArray[i] = { "startnumber": i+1,"tattempts": data[i].tattempts, "battempts": data[i].battempts };
+				$('#TA_'+i).val(resultsArray[i].tattempts);
+				$('#BA_'+i).val(resultsArray[i].battempts);
 			};
 		});
 	});
@@ -50,9 +50,9 @@ function main() {
 		var theOutputJSON = "";
 		var theFormContents = [];
 		// Get the form contents and check them against previously submitted data
-		for (var i=theResultsArray.length-1; i>=0; i--){
+		for (var i=resultsArray.length-1; i>=0; i--){
 			theFormContents[i] = { "startnumber": i+1, "tattempts": parseInt($('#TA_'+i).val(),10), "battempts": parseInt($('#BA_'+i).val(),10) };
-			(JSON.stringify(theResultsArray[i], null) === JSON.stringify(theFormContents[i], null)) ? theFormContents.splice(i, 1) : theResultsArray[i] = theFormContents[i];
+			(JSON.stringify(resultsArray[i], null) === JSON.stringify(theFormContents[i], null)) ? theFormContents.splice(i, 1) : resultsArray[i] = theFormContents[i];
 		};		
 		// If any data has changed, POST to the server... 
 		if (theFormContents.length>0) {

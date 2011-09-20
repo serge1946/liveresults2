@@ -16,7 +16,6 @@
 		<script type="text/javascript" src="./js/json2.min.js"></script>
 		<script type="text/javascript" src="./js/jquery.localize.js"></script>
 		<script type="text/javascript" src="./js/jqtouch.min.js"></script>
-
 		<script type="text/javascript" src="./js/JSInputResults.js" ></script>
 	</head>
 	<body>
